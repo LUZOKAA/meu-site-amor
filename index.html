@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nosso Amor Mágico 💖</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Orbitron', sans-serif;
+    height:100vh; overflow:hidden; display:flex; justify-content:center; align-items:center;
+    background:#000; background-size:cover; background-position:center; transition: background 2s ease-in-out;
+    color:#fff;
+  }
+  .overlay{
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.4); backdrop-filter:blur(3px); z-index:0;
+  }
+  .card{
+    position:relative; z-index:1; width:90%; max-width:900px;
+    padding:40px; border-radius:20px; text-align:center;
+    background:rgba(0,0,0,0.35); box-shadow:0 15px 35px rgba(0,0,0,0.4);
+  }
+  h1{ font-size:3.5rem; margin-bottom:20px; text-shadow:2px 2px 10px rgba(0,0,0,0.6);}
+  #mensagem{ margin-top:20px; font-size:1.5rem; opacity:1; transition: opacity 1s; }
+  #recado{ font-size:1.5rem; margin-bottom:15px; }
+  .login{ margin-top:20px; }
+  input[type="password"]{ padding:12px; border-radius:10px; border:0; width:70%; max-width:350px; font-size:1.2rem; text-transform:uppercase;}
+  button{ padding:12px 18px; margin-left:10px; border-radius:10px; border:0; font-weight:700; font-size:1.2rem; cursor:pointer; text-transform:uppercase;}
+  #contador{ font-size:3rem; margin-top:30px; display:flex; justify-content:center; gap:20px; font-weight:bold; }
+  .numero{ display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .numero span{ display:block; padding:8px 10px; background:rgba(255,255,255,0.1); border-radius:10px; min-width:50px; text-align:center; font-size:3rem; }
+  .error{ color:#ffd1d1; margin-top:15px; font-size:1.3rem; }
+
+  /* Corações flutuantes */
+  .heart{position:absolute;width:20px;height:20px;background:red;transform:rotate(45deg);animation:float linear infinite;opacity:0.7;}
+  .heart::before,.heart::after{content:''; position:absolute; width:20px; height:20px; background:red; border-radius:50%;}
+  .heart::before{top:-10px; left:0;}
+  .heart::after{left:10px; top:0;}
+  @keyframes float{0%{transform:translateY(100vh) rotate(45deg);}100%{transform:translateY(-10vh) rotate(45deg);}}
+
+  /* Partículas extras */
+  .particle{
+    position:absolute; width:6px; height:6px; background:rgba(255,182,193,0.7);
+    border-radius:50%; pointer-events:none; animation:particleMove linear infinite;
+  }
+  @keyframes particleMove{
+    0%{transform:translateY(100vh) translateX(0);}
+    100%{transform:translateY(-10vh) translateX(30px);}
+  }
+</style>
+</head>
+<body>
+<div class="overlay"></div>
+
+<div class="card" id="card">
+  <h1>💕 NOSSO AMOR MÁGICO 💕</h1>
+  <p id="recado">A DATA MAIS IMPORTANTE DAS NOSSAS VIDAS</p>
+
+  <div class="login" id="loginBox">
+    <input id="pwd" type="password" placeholder="SENHA">
+    <button id="entrar">ENTRAR</button>
+    <div class="error" id="err" style="display:none">SENHA INCORRETA. TENTE NOVAMENTE.</div>
+  </div>
+
+  <div id="protected" style="display:none">
+    <div id="contador"></div>
+    <div id="mensagem"></div>
+    <p style="margin-top:20px;font-size:1.1rem;opacity:0.9;">GUARDE ESSE LINK SÓ PRA GENTE ✨</p>
+  </div>
+</div>
+
+<!-- Música de fundo -->
+<audio id="musica" loop>
+  <source src="te_vivo.mp3" type="audio/mpeg">
+  Seu navegador não suporta áudio.
+</audio>
+
+<script>
+const SENHA="171223";
+const entrarBtn=document.getElementById('entrar');
+const pwdInput=document.getElementById('pwd');
+const err=document.getElementById('err');
+const loginBox=document.getElementById('loginBox');
+const protectedEl=document.getElementById('protected');
+const mensagemEl=document.getElementById('mensagem');
+const contadorEl=document.getElementById('contador');
+const recadoEl=document.getElementById('recado');
+
+entrarBtn.addEventListener('click',tryLogin);
+pwdInput.addEventListener('keyup',(e)=>{if(e.key==='Enter')tryLogin();});
+
+function tryLogin(){
+  if(pwdInput.value===SENHA){
+    loginBox.style.display='none';
+    protectedEl.style.display='block';
+    recadoEl.textContent = "TE AMO A ..."; // personaliza o recado pós-senha
+    startCounter();
+    startHearts();
+    startParticles();
+    startBackgroundSlideshow();
+    showMessages();
+    tocarMusica();
+  }else{
+    err.style.display='block';
+    setTimeout(()=>err.style.display='none',2500);
+  }
+}
+
+// Função música
+function tocarMusica(){
+  const musica = document.getElementById('musica');
+  musica.volume = 0.3;
+  musica.play().catch(()=>console.log("Clique para ativar o som se não tocar automaticamente"));
+}
+
+// Contador digital estático
+const dataInicio=new Date(2023,11,17,0,0,0);
+function startCounter(){
+  function atualizar(){
+    const agora=new Date();
+    const diff=agora-dataInicio;
+    const dias=Math.floor(diff/(1000*60*60*24));
+    const horas=Math.floor((diff/(1000*60*60))%24);
+    const minutos=Math.floor((diff/(1000*60))%60);
+    const segundos=Math.floor((diff/1000)%60);
+
+    const numeros=[dias,horas,minutos,segundos];
+    contadorEl.innerHTML='';
+    numeros.forEach((num)=>{
+      const div=document.createElement('div');
+      div.classList.add('numero');
+      const span=document.createElement('span');
+      span.textContent=num.toString().padStart(2,'0');
+      div.appendChild(span);
+      contadorEl.appendChild(div);
+    });
+  }
+  atualizar();
+  setInterval(atualizar,1000);
+}
+
+// Corações flutuantes
+function startHearts(){
+  function criarCoracao(){
+    const heart=document.createElement('div');
+    heart.classList.add('heart');
+    heart.style.left=Math.random()*100+'vw';
+    heart.style.width=10+Math.random()*20+'px';
+    heart.style.height=10+Math.random()*20+'px';
+    heart.style.animationDuration=3+Math.random()*5+'s';
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),8000);
+  }
+  setInterval(criarCoracao,300);
+}
+
+// Partículas extras
+function startParticles(){
+  function criarParticle(){
+    const p=document.createElement('div');
+    p.classList.add('particle');
+    p.style.left=Math.random()*100+'vw';
+    p.style.animationDuration=3+Math.random()*5+'s';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),8000);
+  }
+  setInterval(criarParticle,250);
+}
+
+// Fundo slideshow com 8 fotos
+const fotos=['1.jpeg','2.jpeg','3.jpeg','4.jpeg','5.jpeg','6.jpeg','7.jpeg','8.jpeg'];
+let idx=0;
+function startBackgroundSlideshow(){
+  setInterval(()=>{
+    idx=(idx+1)%fotos.length;
+    document.body.style.backgroundImage=`url(${fotos[idx]})`;
+  },5000);
+  document.body.style.backgroundImage=`url(${fotos[0]})`;
+}
+
+// Mensagens fofas
+const mensagens=[
+  "CADA DIA AO SEU LADO É UM PRESENTE 🎁",
+  "VOCÊ É MEU SORRISO DIÁRIO 😊",
+  "NOSSO AMOR SÓ CRESCE 💖",
+  "OBRIGADO POR EXISTIR NA MINHA VIDA ✨"
+];
+function showMessages(){
+  let i=0;
+  function prox(){
+    mensagemEl.style.opacity=0;
+    setTimeout(()=>{
+      mensagemEl.textContent=mensagens[i];
+      mensagemEl.style.opacity=1;
+      i=(i+1)%mensagens.length;
+    },400);
+  }
+  prox();
+  setInterval(prox,4000);
+}
+</script>
+</body>
+</html>
